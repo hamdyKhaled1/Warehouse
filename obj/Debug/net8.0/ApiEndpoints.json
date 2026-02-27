@@ -1,6 +1,112 @@
 [
   {
-    "ContainingType": "Warehouse.Features.Orders.OrdersController",
+    "ContainingType": "Warehouse.Features.Account.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "Warehouse.Features.Account.Login.LoginCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.Features.Account.AuthController",
+    "Method": "RegisterManager",
+    "RelativePath": "api/Auth/register/manager",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "Warehouse.Features.Account.Register.RegisterManagerCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.Features.Account.AuthController",
+    "Method": "RegisterStaff",
+    "RelativePath": "api/Auth/register/staff",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "Warehouse.Features.Account.Register.RegisterStaffCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.OrderItemsController",
+    "Method": "Create",
+    "RelativePath": "api/OrderItems",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "Warehouse.Features.OrderItems.Create.CreateOrderItemCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.OrderItemsController",
+    "Method": "Delete",
+    "RelativePath": "api/OrderItems/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.OrderItemsController",
+    "Method": "GetByOrderId",
+    "RelativePath": "api/OrderItems/order/{orderId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.OrdersController",
+    "Method": "GetAll",
+    "RelativePath": "api/Orders",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.OrdersController",
     "Method": "Create",
     "RelativePath": "api/Orders",
     "HttpMethod": "POST",
@@ -16,8 +122,8 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Orders.OrdersController",
-    "Method": "GetOrderById",
+    "ContainingType": "Warehouse.API.Controllers.OrdersController",
+    "Method": "GetById",
     "RelativePath": "api/Orders/{id}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -32,8 +138,8 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Orders.OrdersController",
-    "Method": "UpdateOrder",
+    "ContainingType": "Warehouse.API.Controllers.OrdersController",
+    "Method": "Update",
     "RelativePath": "api/Orders/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
@@ -53,7 +159,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Orders.OrdersController",
+    "ContainingType": "Warehouse.API.Controllers.OrdersController",
     "Method": "Delete",
     "RelativePath": "api/Orders/{id}",
     "HttpMethod": "DELETE",
@@ -69,9 +175,30 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Orders.OrdersController",
-    "Method": "GetAllOrders",
-    "RelativePath": "api/Orders/all",
+    "ContainingType": "Warehouse.API.Controllers.OrdersController",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/Orders/{id}/status",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "newStatus",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.ProductsController",
+    "Method": "GetAll",
+    "RelativePath": "api/Products",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -79,7 +206,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Products.ProductsController",
+    "ContainingType": "Warehouse.API.Controllers.ProductsController",
     "Method": "Create",
     "RelativePath": "api/Products",
     "HttpMethod": "POST",
@@ -95,17 +222,23 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Products.ProductsController",
-    "Method": "GetCatalog",
-    "RelativePath": "api/Products",
+    "ContainingType": "Warehouse.API.Controllers.ProductsController",
+    "Method": "GetById",
+    "RelativePath": "api/Products/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Products.ProductsController",
+    "ContainingType": "Warehouse.API.Controllers.ProductsController",
     "Method": "Update",
     "RelativePath": "api/Products/{id}",
     "HttpMethod": "PUT",
@@ -126,7 +259,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Products.ProductsController",
+    "ContainingType": "Warehouse.API.Controllers.ProductsController",
     "Method": "Delete",
     "RelativePath": "api/Products/{id}",
     "HttpMethod": "DELETE",
@@ -153,6 +286,164 @@
         "Name": "id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.StocksController",
+    "Method": "GetAll",
+    "RelativePath": "api/Stocks",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.StocksController",
+    "Method": "Create",
+    "RelativePath": "api/Stocks",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "Warehouse.Features.Stocks.Create.CreateStockCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.StocksController",
+    "Method": "GetById",
+    "RelativePath": "api/Stocks/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.StocksController",
+    "Method": "Update",
+    "RelativePath": "api/Stocks/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "command",
+        "Type": "Warehouse.Features.Stocks.Update.UpdateStockCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.StocksController",
+    "Method": "Delete",
+    "RelativePath": "api/Stocks/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.WarehousesController",
+    "Method": "GetAll",
+    "RelativePath": "api/Warehouses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.WarehousesController",
+    "Method": "Create",
+    "RelativePath": "api/Warehouses",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "Warehouse.Features.Warehouses.Create.CreateWarehouseCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.WarehousesController",
+    "Method": "GetById",
+    "RelativePath": "api/Warehouses/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.WarehousesController",
+    "Method": "Update",
+    "RelativePath": "api/Warehouses/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "command",
+        "Type": "Warehouse.Features.Warehouses.Update.UpdateWarehouseCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Warehouse.API.Controllers.WarehousesController",
+    "Method": "Delete",
+    "RelativePath": "api/Warehouses/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

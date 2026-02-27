@@ -1,44 +1,42 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Warehouse.Common;
+using Warehouse.Features.OrderItems;
 using Warehouse.Features.Orders.GetOrder.DTO;
 using Warehouse.Infrastructure.Data;
 
 namespace Warehouse.Features.Orders.GetOrder.GetAll
 {
     public class GetAllOrdersHandler
-     : IRequestHandler<GetAllOrdersQuery, List<OrderDto>>
+         : IRequestHandler<GetAllOrdersQuery, Result<List<OrderResponse>>>
     {
         private readonly WarehouseDbContext _context;
 
-        public GetAllOrdersHandler(WarehouseDbContext context)
-        {
-            _context = context;
-        }
+        public GetAllOrdersHandler(WarehouseDbContext context) => _context = context;
 
-        public async Task<List<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<OrderResponse>>> Handle(
+            GetAllOrdersQuery request,
+            CancellationToken cancellationToken)
         {
             var orders = await _context.Orders
-                .Where(o => o.IsDeleted==false) 
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
-                .Select(o => new OrderDto
-                {
-                    Id = o.Id,
-                    OrderNumber = o.OrderNumber,
-                    TotalAmount = o.TotalAmount,
-                    Status = o.Status,
-                    Items = o.OrderItems.Select(oi => new OrderItemDto
-                    {
-                        Id = oi.Id,
-                        ProductId = oi.ProductId,
-                        ProductName = oi.Product.Name,
-                        Quantity = oi.Quantity,
-                        UnitPrice = oi.UnitPrice
-                    }).ToList()
-                })
+                .Include(o=>o.OrderItems)
                 .ToListAsync(cancellationToken);
+            var response = orders.Select(o => new OrderResponse(
+            o.Id,
+            o.OrderNumber,
+            o.TotalAmount,
+            o.Status,
+            o.CreatedAt,
+            o.OrderItems.Select(i => new OrderItemResponse(
+                i.Id,
+                i.OrderId,
+                i.ProductId,
+                i.Quantity,
+                i.UnitPrice)).ToList()
+        )).ToList();
 
-            return orders;
+            return Result<List<OrderResponse>>.Ok(
+                response, $"{orders.Count} orders found.");
         }
     }
 }

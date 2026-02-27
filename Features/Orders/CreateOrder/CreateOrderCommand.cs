@@ -1,13 +1,18 @@
 ﻿using MediatR;
+using Warehouse.Common;
+using Warehouse.Features.OrderItems;
 
 namespace Warehouse.Features.Orders.CreateOrder
 {
-    public record CreateOrderCommand(
-    List<OrderItemDto> Items
-) : IRequest<int>;
+    //public record CreateOrderCommand(
+    //        string OrderNumber,
+    //        decimal? TotalAmount
+    //    ) : IRequest<Result<OrderResponse>>;
 
-    public record OrderItemDto(
-        int ProductId,
-        int Quantity
-    );
+    // كائن يمثل العنصر الواحد داخل الطلب
+    public record OrderItemDto(int ProductId, int Quantity, decimal UnitPrice);
+
+    public record CreateOrderCommand(
+            List<OrderItemDto> Items // إجبار وجود عناصر
+        ) : IRequest<Result<OrderResponse>>;
 }

@@ -1,4 +1,4 @@
-CREATE DATABASE WarehouseDB;
+﻿CREATE DATABASE WarehouseDB;
 GO
 USE WarehouseDB;
 
@@ -117,3 +117,45 @@ VALUES
 (1, 3, 1, 50),    -- Mouse
 (2, 2, 1, 1500),  -- iPhone
 (2, 5, 2, 200);   -- HD Monitor
+
+
+
+-- 1. الأول حول الـ data الموجودة
+UPDATE Orders
+SET Status = CASE Status
+    WHEN 'Pending'    THEN '1'
+    WHEN 'Processing' THEN '2'
+    WHEN 'Completed'  THEN '3'
+    WHEN 'Cancelled'  THEN '4'
+    ELSE '1'
+END;
+
+-- 2. اعرف اسم الـ Default Constraint
+SELECT name FROM sys.default_constraints
+WHERE parent_object_id = OBJECT_ID('Orders')
+AND col_name(parent_object_id, parent_column_id) = 'Status';
+
+-- 3. احذف الـ Default القديم (حط الاسم اللي طلع)
+ALTER TABLE Orders
+DROP CONSTRAINT DF__Orders__Status__4222D4EF;
+
+-- 4. غير النوع لـ INT
+ALTER TABLE Orders
+ALTER COLUMN Status INT NOT NULL;
+
+-- 5. ضيف Default جديد
+ALTER TABLE Orders
+ADD CONSTRAINT DF_Orders_Status DEFAULT 1 FOR Status;
+
+-- 6. ضيف Check Constraint
+ALTER TABLE Orders
+ADD CONSTRAINT CK_Orders_Status
+CHECK (Status IN (1, 2, 3, 4));
+
+-- 7. IsDeleted للـ Warehouses
+ALTER TABLE Warehouses
+ADD IsDeleted BIT NOT NULL DEFAULT 0;
+
+-- 8. IsDeleted للـ Stocks
+ALTER TABLE Stocks
+ADD IsDeleted BIT NOT NULL DEFAULT 0;

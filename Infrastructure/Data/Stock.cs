@@ -15,6 +15,8 @@ public partial class Stock
 
     public byte[] RowVersion { get; set; } = null!;
 
+    public bool IsDeleted { get; set; } = false;
+
     public virtual Product Product { get; set; } = null!;
 
     public virtual Warehouse Warehouse { get; set; } = null!;

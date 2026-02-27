@@ -1,76 +1,66 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Warehouse.Common;
+using Warehouse.Features.OrderItems;
 using Warehouse.Infrastructure.Data;
 
 namespace Warehouse.Features.Orders.CreateOrder
 {
     public class CreateOrderHandler
-    : IRequestHandler<CreateOrderCommand, int>
+        : IRequestHandler<CreateOrderCommand, Result<OrderResponse>>
     {
         private readonly WarehouseDbContext _context;
 
-        public CreateOrderHandler(WarehouseDbContext context)
-        {
-            _context = context;
-        }
+        public CreateOrderHandler(WarehouseDbContext context) => _context = context;
 
-        
-        /// Creates order using optimistic concurrency.
-        /// Prevents two users from buying last item simultaneously.
-       
-        public async Task<int> Handle(
+        public async Task<Result<OrderResponse>> Handle(
             CreateOrderCommand request,
             CancellationToken cancellationToken)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            // 1. توليد رقم طلب تلقائي فريد ومحمي
+            // التنسيق: ORD-تاريخ اليوم-جزء عشوائي
+            string generatedOrderNumber = $"ORD-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 5).ToUpper()}";
 
-            decimal total = 0;
+            // 2. حساب إجمالي المبلغ برمجياً لضمان الأمان 100%
+            decimal calculatedTotal = request.Items.Sum(i => i.Quantity * i.UnitPrice);
 
+           
+
+            // 3. بناء كائن الطلب مع العناصر (Mapping)
             var order = new Order
             {
-                OrderNumber = Guid.NewGuid().ToString(),
-                Status = "Completed"
+                OrderNumber = generatedOrderNumber,
+                TotalAmount = calculatedTotal, // القيمة المحسوبة
+                Status = OrderStatus.Pending,
+                CreatedAt = DateTime.UtcNow,
+                OrderItems = request.Items.Select(i => new OrderItem
+                {
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList()
             };
 
+           
             _context.Orders.Add(order);
             await _context.SaveChangesAsync(cancellationToken);
 
-            foreach (var item in request.Items)
-            {
-                var stock = await _context.Stocks
-                    .FirstOrDefaultAsync(s => s.ProductId == item.ProductId);
-
-                if (stock == null || stock.Quantity < item.Quantity)
-                    throw new Exception("Insufficient stock");
-
-                stock.Quantity -= item.Quantity;
-
-                var product = await _context.Products.FindAsync(item.ProductId);
-
-                total += product.Price * item.Quantity;
-
-                _context.OrderItems.Add(new OrderItem
-                {
-                    OrderId = order.Id,
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    UnitPrice = product.Price
-                });
-            }
-
-            order.TotalAmount = total;
-
-            try
-            {
-                await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new Exception("Stock updated by another user. Try again.");
-            }
-
-            return order.Id;
+            return Result<OrderResponse>.Ok(
+     new OrderResponse(
+         order.Id,
+         order.OrderNumber,
+         order.TotalAmount,
+         order.Status,
+         order.CreatedAt,
+        
+         order.OrderItems.Select(i => new OrderItemResponse(
+             i.Id,
+             i.OrderId,
+             i.ProductId,
+             i.Quantity,
+             i.UnitPrice)).ToList()
+     ),
+     "Order Created Successfully.");
         }
     }
 }

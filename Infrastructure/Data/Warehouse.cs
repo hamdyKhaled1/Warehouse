@@ -11,5 +11,7 @@ public partial class Warehouse
 
     public string? Location { get; set; }
 
+    public bool IsDeleted { get; set; } = false;
+
     public virtual ICollection<Stock> Stocks { get; set; } = new List<Stock>();
 }

@@ -190,3 +190,7 @@ D:\Projects .Net\Warehouse\Warehouse\obj\Debug\net8.0\refint\Warehouse.dll
 D:\Projects .Net\Warehouse\Warehouse\obj\Debug\net8.0\Warehouse.pdb
 D:\Projects .Net\Warehouse\Warehouse\obj\Debug\net8.0\Warehouse.genruntimeconfig.cache
 D:\Projects .Net\Warehouse\Warehouse\obj\Debug\net8.0\ref\Warehouse.dll
+D:\Projects .Net\Warehouse\Warehouse\obj\Debug\net8.0\Warehouse.sourcelink.json
+D:\Projects .Net\Warehouse\Warehouse\bin\Debug\net8.0\FluentValidation.dll
+D:\Projects .Net\Warehouse\Warehouse\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Projects .Net\Warehouse\Warehouse\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

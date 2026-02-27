@@ -1,22 +1,17 @@
 ﻿using MediatR;
+using Warehouse.Common;
 using Warehouse.Infrastructure.Data;
 
 namespace Warehouse.Features.Products.Create
 {
     public class CreateProductHandler
-    : IRequestHandler<CreateProductCommand, int>
+         : IRequestHandler<CreateProductCommand, Result<ProductResponse>>
     {
         private readonly WarehouseDbContext _context;
 
-        public CreateProductHandler(WarehouseDbContext context)
-        {
-            _context = context;
-        }
+        public CreateProductHandler(WarehouseDbContext context) => _context = context;
 
-        
-        /// Inserts new product 
-     
-        public async Task<int> Handle(
+        public async Task<Result<ProductResponse>> Handle(
             CreateProductCommand request,
             CancellationToken cancellationToken)
         {
@@ -24,13 +19,21 @@ namespace Warehouse.Features.Products.Create
             {
                 Name = request.Name,
                 Description = request.Description,
-                Price = request.Price
+                Price = request.Price,
+                IsActive = request.IsActive
             };
 
             _context.Products.Add(product);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return product.Id;
+            return Result<ProductResponse>.Ok(
+                new ProductResponse(
+                    product.Id,
+                    product.Name,
+                    product.Description,
+                    product.Price,
+                    product.IsActive),
+                "Product created successfully.");
         }
     }
 }
