@@ -1,8 +1,8 @@
 [
   {
-    "ContainingType": "Warehouse.Features.Account.AuthController",
+    "ContainingType": "Warehouse.Features.Account.AccountController",
     "Method": "Login",
-    "RelativePath": "api/Auth/login",
+    "RelativePath": "api/Account/login",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -16,9 +16,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Account.AuthController",
+    "ContainingType": "Warehouse.Features.Account.AccountController",
     "Method": "RegisterManager",
-    "RelativePath": "api/Auth/register/manager",
+    "RelativePath": "api/Account/register/manager",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -32,9 +32,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Warehouse.Features.Account.AuthController",
+    "ContainingType": "Warehouse.Features.Account.AccountController",
     "Method": "RegisterStaff",
-    "RelativePath": "api/Auth/register/staff",
+    "RelativePath": "api/Account/register/staff",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,

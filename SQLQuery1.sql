@@ -159,3 +159,12 @@ ADD IsDeleted BIT NOT NULL DEFAULT 0;
 -- 8. IsDeleted للـ Stocks
 ALTER TABLE Stocks
 ADD IsDeleted BIT NOT NULL DEFAULT 0;
+
+CREATE TABLE Users (
+    Id       INT IDENTITY(1,1) PRIMARY KEY,
+    Email    NVARCHAR(150) NOT NULL UNIQUE,
+    Password NVARCHAR(256) NOT NULL,
+    Role     NVARCHAR(50)  NOT NULL DEFAULT 'WarehouseStaff',
+    CONSTRAINT CK_Users_Role
+        CHECK (Role IN ('Admin', 'Manager', 'WarehouseStaff'))
+);

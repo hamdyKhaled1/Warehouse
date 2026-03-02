@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Warehouse.Common;
 using Warehouse.Features.OrderItems;
 using Warehouse.Infrastructure.Data;
 
-namespace Warehouse.Features.Orders.Update
+namespace Warehouse.Features.Orders.Update.UpdateStatus
 {
-    public class UpdateOrderStatusHandler
+    public class UpdateOrderStatusHandler:IRequestHandler<UpdateOrderStatusCommand, Result<OrderResponse>>
     {
         private readonly WarehouseDbContext _context;
 

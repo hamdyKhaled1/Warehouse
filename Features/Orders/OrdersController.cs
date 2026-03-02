@@ -6,13 +6,14 @@ using Warehouse.Features.Orders.Delete;
 using Warehouse.Features.Orders.GetOrder.GetAll;
 using Warehouse.Features.Orders.GetOrder.GetById;
 using Warehouse.Features.Orders.Update;
+using Warehouse.Features.Orders.Update.UpdateStatus;
 using Warehouse.Infrastructure.Data;
 
 namespace Warehouse.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-   // [Authorize]
+   [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IMediator _mediator;

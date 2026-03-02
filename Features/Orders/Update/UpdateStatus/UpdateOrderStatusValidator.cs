@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Warehouse.Features.Orders.Update
+namespace Warehouse.Features.Orders.Update.UpdateStatus
 {
     public class UpdateOrderStatusValidator : AbstractValidator<UpdateOrderStatusCommand>
     {

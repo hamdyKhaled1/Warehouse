@@ -30,16 +30,38 @@ namespace Warehouse.Features.Stocks.Create
                 return Result<StockResponse>.Failure(
                     $"Warehouse with Id {request.WarehouseId} not found.");
 
-            // 3. Stock موجود بالفعل لنفس الـ Product والـ Warehouse؟
-            var stockExists = await _context.Stocks
-                .AnyAsync(s =>
+            // 3. Stock موجود؟
+            var existingStock = await _context.Stocks
+                .FirstOrDefaultAsync(s =>
                     s.ProductId == request.ProductId &&
                     s.WarehouseId == request.WarehouseId,
                     cancellationToken);
-            if (stockExists)
-                return Result<StockResponse>.Failure(
-                    "Stock already exists for this product in this warehouse.");
 
+            if (existingStock != null)
+            {
+                // ← لو موجود زود الكمية بس وخلاص
+                existingStock.Quantity += request.Quantity;
+
+                try
+                {
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return Result<StockResponse>.Failure(
+                        "A conflict occurred while saving. Please try again.");
+                }
+
+                return Result<StockResponse>.Ok(
+                    new StockResponse(
+                        existingStock.Id,
+                        existingStock.ProductId,
+                        existingStock.WarehouseId,
+                        existingStock.Quantity),
+                    "Stock quantity updated successfully.");
+            }
+
+            // 4. لو مش موجود عمل Stock جديد
             var stock = new Stock
             {
                 ProductId = request.ProductId,

@@ -17,6 +17,7 @@ namespace Warehouse.Features.Products.Update
             CancellationToken cancellationToken)
         {
             var product = await _context.Products
+
                 .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
             if (product is null)

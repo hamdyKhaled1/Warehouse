@@ -2,7 +2,7 @@
 using Warehouse.Common;
 using Warehouse.Infrastructure.Data;
 
-namespace Warehouse.Features.Orders.Update
+namespace Warehouse.Features.Orders.Update.UpdateStatus
 {
     public record UpdateOrderStatusCommand(
         int Id,

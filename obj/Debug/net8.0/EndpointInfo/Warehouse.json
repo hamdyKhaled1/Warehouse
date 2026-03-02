@@ -5,10 +5,10 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Auth/register/staff": {
+    "/api/Account/register/staff": {
       "post": {
         "tags": [
-          "Auth"
+          "Account"
         ],
         "requestBody": {
           "content": {
@@ -36,10 +36,10 @@
         }
       }
     },
-    "/api/Auth/register/manager": {
+    "/api/Account/register/manager": {
       "post": {
         "tags": [
-          "Auth"
+          "Account"
         ],
         "requestBody": {
           "content": {
@@ -67,10 +67,10 @@
         }
       }
     },
-    "/api/Auth/login": {
+    "/api/Account/login": {
       "post": {
         "tags": [
-          "Auth"
+          "Account"
         ],
         "requestBody": {
           "content": {

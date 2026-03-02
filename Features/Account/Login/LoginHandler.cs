@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Warehouse.Common;
 using Warehouse.Common.JWT;
@@ -9,12 +10,14 @@ namespace Warehouse.Features.Account.Login
 
     public class LoginHandler : IRequestHandler<LoginCommand, Result<LoginResponse>>
     {
-        private readonly WarehouseDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IJwtService _jwtService;
 
-        public LoginHandler(WarehouseDbContext context, IJwtService jwtService)
+        public LoginHandler(
+            UserManager<ApplicationUser> userManager,
+            IJwtService jwtService)
         {
-            _context = context;
+            _userManager = userManager;
             _jwtService = jwtService;
         }
 
@@ -22,20 +25,19 @@ namespace Warehouse.Features.Account.Login
             LoginCommand request,
             CancellationToken cancellationToken)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
-
+            var user = await _userManager.FindByEmailAsync(request.Email);
             if (user is null)
                 return Result<LoginResponse>.Failure("Invalid email or password.");
 
-            var isValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
+            var isValid = await _userManager.CheckPasswordAsync(user, request.Password);
             if (!isValid)
                 return Result<LoginResponse>.Failure("Invalid email or password.");
 
-            var token = _jwtService.GenerateToken(user.Id, user.Email, user.Role);
+            var roles = await _userManager.GetRolesAsync(user);
+            var token = _jwtService.GenerateToken(user, roles);
 
             return Result<LoginResponse>.Ok(
-                new LoginResponse(token, user.Email, user.Role),
+                new LoginResponse(token, user.Email!, roles.FirstOrDefault() ?? ""),
                 "Login successful.");
         }
     }

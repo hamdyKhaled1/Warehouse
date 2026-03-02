@@ -19,7 +19,7 @@ public partial class Product
 
     public bool IsDeleted { get; set; }= false;
 
-    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    //public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-    public virtual ICollection<Stock> Stocks { get; set; } = new List<Stock>();
+    //public virtual ICollection<Stock> Stocks { get; set; } = new List<Stock>();
 }

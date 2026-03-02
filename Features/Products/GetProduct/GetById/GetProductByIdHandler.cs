@@ -24,6 +24,7 @@ namespace Warehouse.Features.Products.GetProduct.GetById
                     p.Description,
                     p.Price,
                     p.IsActive))
+                
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (product is null)

@@ -2,6 +2,7 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -12,6 +13,7 @@ using System.Text.Json.Serialization;
 using Warehouse.Common;
 using Warehouse.Common;
 using Warehouse.Common.JWT;
+using Warehouse.Features.Account;
 using Warehouse.Infrastructure.Data;
 using Warehouse.Infrastructure.Data;
 
@@ -28,22 +30,38 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
     cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 });
+// Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+})
+.AddEntityFrameworkStores<WarehouseDbContext>()
+.AddDefaultTokenProviders();
+
 // JWT
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-        };
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+    };
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -97,39 +115,64 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+// Seed Roles & Admin
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider
-        .GetRequiredService<WarehouseDbContext>();
+    var roleManager = scope.ServiceProvider
+        .GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider
+        .GetRequiredService<UserManager<ApplicationUser>>();
 
-    // Users
-    if (!context.Users.Any())
+    // Seed Roles
+    string[] roles = { "Admin", "Manager", "WarehouseStaff" };
+    foreach (var role in roles)
     {
-        context.Users.AddRange(
-            new User
-            {
-                Email = "admin@warehouse.com",
-                Password = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
-                Role = "Admin"
-            },
-            new User
-            {
-                Email = "manager@warehouse.com",
-                Password = BCrypt.Net.BCrypt.HashPassword("Manager@123"),
-                Role = "Manager"
-            },
-            new User
-            {
-                Email = "staff@warehouse.com",
-                Password = BCrypt.Net.BCrypt.HashPassword("Staff@123"),
-                Role = "WarehouseStaff"
-            }
-        );
-        await context.SaveChangesAsync();
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
     }
 
+    // Seed Admin
+    var adminEmail = "admin@warehouse.com";
+    if (await userManager.FindByEmailAsync(adminEmail) is null)
+    {
+        var admin = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail
+        };
+        await userManager.CreateAsync(admin, "Admin@123");
+        await userManager.AddToRoleAsync(admin, "Admin");
+    }
 
-    
+    // Seed Manager
+    var managerEmail = "manager@warehouse.com";
+    if (await userManager.FindByEmailAsync(managerEmail) is null)
+    {
+        var manager = new ApplicationUser
+        {
+            UserName = managerEmail,
+            Email = managerEmail
+        };
+        await userManager.CreateAsync(manager, "Manager@123");
+        await userManager.AddToRoleAsync(manager, "Manager");
+    }
+
+    // Seed Staff
+    var staffEmail = "staff@warehouse.com";
+    if (await userManager.FindByEmailAsync(staffEmail) is null)
+    {
+        var staff = new ApplicationUser
+        {
+            UserName = staffEmail,
+            Email = staffEmail
+        };
+        await userManager.CreateAsync(staff, "Staff@123");
+        await userManager.AddToRoleAsync(staff, "WarehouseStaff");
+    }
+}
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseSwagger();
